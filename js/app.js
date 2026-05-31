@@ -114,11 +114,16 @@ class App {
       (city) => this.handleSearch(city),
       () => {
         if (this.currentCityData) {
-          this.cityList.addCity(this.currentCityData);
-          this.searchPanel.hideSaveButton();
-          this.searchPanel.clearInput();
-          this.searchPanel.showError('Город сохранён!');
-          setTimeout(() => this.searchPanel.hideError(), 3000);
+          const added = this.cityList.addCity(this.currentCityData);
+          if (added) {
+            this.searchPanel.hideSaveButton();
+            this.searchPanel.clearInput();
+            this.searchPanel.showError('Город сохранён!');
+            setTimeout(() => this.searchPanel.hideError(), 3000);
+          } else {
+            this.searchPanel.showError('Этот город уже сохранён!');
+            setTimeout(() => this.searchPanel.hideError(), 3000);
+          }
         }
       }
     );

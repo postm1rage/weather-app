@@ -11,8 +11,13 @@ class CityList {
   }
 
   addCity(cityData) {
+    const alreadyExists = this.cities.some(c => c.city === cityData.city);
+    if (alreadyExists) {
+      return false;
+    }
     this.cities.push(cityData);
     this.applyFiltersAndSort();
+    return true;
   }
 
   removeCity(name) {
