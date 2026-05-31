@@ -52,11 +52,13 @@ class App {
     const cityListContainer = document.createElement('div');
     cityListContainer.id = 'city-list-container';
 
+    // Панель управления
     const controlsContainer = document.createElement('div');
     controlsContainer.className = 'controls';
 
+    // Сортировка
     const sortLabel = document.createElement('label');
-    sortLabel.textContent = 'Сортировать по: ';
+    sortLabel.textContent = 'Сортировать по:';
     const sortSelect = document.createElement('select');
     sortSelect.innerHTML = `
       <option value="">Без сортировки</option>
@@ -75,16 +77,23 @@ class App {
       }
     });
 
+    // Фильтр по температуре
+    const filterGroup = document.createElement('span');
+    filterGroup.className = 'filter-group';
+
     const filterLabel = document.createElement('label');
-    filterLabel.textContent = 'Температура от ';
+    filterLabel.textContent = 'Температура от';
     const filterMin = document.createElement('input');
     filterMin.type = 'number';
     filterMin.placeholder = 'Мин';
     const filterMaxLabel = document.createElement('span');
-    filterMaxLabel.textContent = ' до ';
+    filterMaxLabel.textContent = 'до';
+    filterMaxLabel.style.margin = '0 4px';
     const filterMax = document.createElement('input');
     filterMax.type = 'number';
     filterMax.placeholder = 'Макс';
+
+    filterGroup.append(filterLabel, filterMin, filterMaxLabel, filterMax);
 
     const applyFilter = () => {
       const min = filterMin.value !== '' ? Number(filterMin.value) : null;
@@ -95,14 +104,10 @@ class App {
     filterMin.addEventListener('keyup', applyFilter);
     filterMax.addEventListener('keyup', applyFilter);
 
+    controlsContainer.append(sortLabel, sortSelect, filterGroup);
+
     const statsContainer = document.createElement('div');
     statsContainer.id = 'stats-container';
-
-    controlsContainer.append(
-      sortLabel, sortSelect,
-      document.createElement('br'),
-      filterLabel, filterMin, filterMaxLabel, filterMax
-    );
 
     this.searchPanel = new SearchPanel(
       searchPanelContainer,
