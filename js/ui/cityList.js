@@ -2,29 +2,71 @@ class CityList {
   constructor(container) {
     this.container = container;
     this.cities = [];
+    this.filteredCities = [];
+    this.sortField = null;
+    this.sortDirection = 1;
+    this.filterMin = null;
+    this.filterMax = null;
   }
 
   addCity(cityData) {
     this.cities.push(cityData);
+    this.applyFiltersAndSort();
   }
 
   removeCity(name) {
     this.cities = this.cities.filter(c => c.city !== name);
+    this.applyFiltersAndSort();
   }
 
   sortBy(field) {
-    // позже
+    if (this.sortField === field) {
+      this.sortDirection *= -1;
+    } else {
+      this.sortField = field;
+      this.sortDirection = 1;
+    }
+    this.applyFiltersAndSort();
   }
 
   filterByTemp(min, max) {
-    // позже
+    this.filterMin = min;
+    this.filterMax = max;
+    this.applyFiltersAndSort();
+  }
+
+  applyFiltersAndSort() {
+    let result = [...this.cities];
+
+    // Фильтрация по температуре
+    if (this.filterMin !== null && this.filterMin !== '') {
+      result = result.filter(c => c.temp >= Number(this.filterMin));
+    }
+    if (this.filterMax !== null && this.filterMax !== '') {
+      result = result.filter(c => c.temp <= Number(this.filterMax));
+    }
+
+    // Сортировка
+    if (this.sortField) {
+      result.sort((a, b) => {
+        const aVal = a[this.sortField];
+        const bVal = b[this.sortField];
+        if (typeof aVal === 'string') {
+          return this.sortDirection * aVal.localeCompare(bVal);
+        }
+        return this.sortDirection * (aVal - bVal);
+      });
+    }
+
+    this.filteredCities = result;
+    this.render();
   }
 
   render() {
     this.container.innerHTML = '';
 
-    if (this.cities.length === 0) {
-      this.container.innerHTML = '<p>Сохранённых городов пока нет.</p>';
+    if (this.filteredCities.length === 0) {
+      this.container.innerHTML = '<p>Сохранённых городов нет или они не найдены.</p>';
       return;
     }
 
@@ -44,7 +86,7 @@ class CityList {
     table.appendChild(thead);
 
     const tbody = document.createElement('tbody');
-    this.cities.forEach(city => {
+    this.filteredCities.forEach(city => {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${city.city}</td>
@@ -63,7 +105,6 @@ class CityList {
       btn.addEventListener('click', () => {
         const name = btn.dataset.city;
         this.removeCity(name);
-        this.render();
       });
     });
   }

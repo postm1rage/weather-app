@@ -4,6 +4,7 @@ import Header from './ui/header.js';
 import WeatherCard from './ui/weatherCard.js';
 import CityList from './ui/cityList.js';
 import SearchPanel from './ui/searchPanel.js';
+import Stats from './ui/stats.js';
 
 class App {
   constructor() {
@@ -14,6 +15,7 @@ class App {
     this.weatherCard = null;
     this.cityList = null;
     this.searchPanel = null;
+    this.stats = null;
     this.userName = '';
     this.mainContainer = null;
     this.currentCityData = null;
@@ -43,12 +45,81 @@ class App {
     this.mainContainer = document.createElement('div');
     this.mainContainer.className = 'main-screen';
 
+    // Поиск города
     const searchPanelContainer = document.createElement('div');
     const weatherContainer = document.createElement('div');
     weatherContainer.id = 'weather-container';
+
+    // Список городов
     const cityListContainer = document.createElement('div');
     cityListContainer.id = 'city-list-container';
 
+    // Элементы управления
+    const controlsContainer = document.createElement('div');
+    controlsContainer.className = 'controls';
+
+    // Сортировка
+    const sortLabel = document.createElement('label');
+    sortLabel.textContent = 'Сортировать по: ';
+    const sortSelect = document.createElement('select');
+    sortSelect.innerHTML = `
+      <option value="">Без сортировки</option>
+      <option value="city">Город</option>
+      <option value="temp">Температура</option>
+      <option value="humidity">Влажность</option>
+      <option value="windSpeed">Ветер</option>
+    `;
+    sortSelect.addEventListener('change', () => {
+      const field = sortSelect.value;
+      if (field) {
+        this.cityList.sortBy(field);
+      } else {
+        this.cityList.sortField = null;
+        this.cityList.applyFiltersAndSort();
+      }
+    });
+
+    // Фильтр по температуре
+    const filterLabel = document.createElement('label');
+    filterLabel.textContent = 'Температура от ';
+    const filterMin = document.createElement('input');
+    filterMin.type = 'number';
+    filterMin.placeholder = 'Мин';
+    const filterMaxLabel = document.createElement('span');
+    filterMaxLabel.textContent = ' до ';
+    const filterMax = document.createElement('input');
+    filterMax.type = 'number';
+    filterMax.placeholder = 'Макс';
+
+    const applyFilter = () => {
+      const min = filterMin.value !== '' ? Number(filterMin.value) : null;
+      const max = filterMax.value !== '' ? Number(filterMax.value) : null;
+      this.cityList.filterByTemp(min, max);
+    };
+
+    filterMin.addEventListener('keyup', applyFilter);
+    filterMax.addEventListener('keyup', applyFilter);
+
+    // Кнопка статистики
+    const statsBtn = document.createElement('button');
+    statsBtn.textContent = 'Показать статистику';
+    const statsContainer = document.createElement('div');
+    statsContainer.id = 'stats-container';
+
+    statsBtn.addEventListener('click', () => {
+      const citiesToAnalyze = this.cityList.filteredCities || this.cityList.cities;
+      this.stats.render(citiesToAnalyze);
+    });
+
+    controlsContainer.append(
+      sortLabel, sortSelect,
+      document.createElement('br'),
+      filterLabel, filterMin, filterMaxLabel, filterMax,
+      document.createElement('br'),
+      statsBtn
+    );
+
+    // Инициализация компонентов
     this.searchPanel = new SearchPanel(
       searchPanelContainer,
       (city) => this.handleSearch(city),
@@ -66,10 +137,17 @@ class App {
 
     this.weatherCard = new WeatherCard(weatherContainer);
     this.cityList = new CityList(cityListContainer);
+    this.stats = new Stats(statsContainer);
 
-    this.mainContainer.append(searchPanelContainer, weatherContainer, cityListContainer);
+    this.mainContainer.append(
+      searchPanelContainer,
+      weatherContainer,
+      controlsContainer,
+      cityListContainer,
+      statsContainer
+    );
+
     this.container.appendChild(this.mainContainer);
-
     this.searchPanel.render();
   }
 
