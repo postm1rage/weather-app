@@ -4,15 +4,36 @@ class Header {
   }
 
   render(name) {
-    throw new Error('1');
+    this.container.innerHTML = '';
+
+    const header = document.createElement('header');
+    header.className = 'header';
+
+    const greeting = document.createElement('span');
+    greeting.textContent = `Привет, ${name}!`;
+    greeting.className = 'greeting';
+
+    const changeBtn = document.createElement('button');
+    changeBtn.textContent = 'Сменить имя';
+    changeBtn.className = 'btn-change-name';
+
+    header.append(greeting, changeBtn);
+    this.container.appendChild(header);
+
+    changeBtn.addEventListener('click', () => {
+      this.hide();
+      if (this.onChangeName) {
+        this.onChangeName();
+      }
+    });
   }
 
   hide() {
-    throw new Error('2');
+    this.container.innerHTML = '';
   }
 
   show() {
-    throw new Error('3');
+
   }
 }
 
