@@ -45,20 +45,16 @@ class App {
     this.mainContainer = document.createElement('div');
     this.mainContainer.className = 'main-screen';
 
-    // Поиск города
     const searchPanelContainer = document.createElement('div');
     const weatherContainer = document.createElement('div');
     weatherContainer.id = 'weather-container';
 
-    // Список городов
     const cityListContainer = document.createElement('div');
     cityListContainer.id = 'city-list-container';
 
-    // Элементы управления
     const controlsContainer = document.createElement('div');
     controlsContainer.className = 'controls';
 
-    // Сортировка
     const sortLabel = document.createElement('label');
     sortLabel.textContent = 'Сортировать по: ';
     const sortSelect = document.createElement('select');
@@ -79,7 +75,6 @@ class App {
       }
     });
 
-    // Фильтр по температуре
     const filterLabel = document.createElement('label');
     filterLabel.textContent = 'Температура от ';
     const filterMin = document.createElement('input');
@@ -100,33 +95,21 @@ class App {
     filterMin.addEventListener('keyup', applyFilter);
     filterMax.addEventListener('keyup', applyFilter);
 
-    // Кнопка статистики
-    const statsBtn = document.createElement('button');
-    statsBtn.textContent = 'Показать статистику';
     const statsContainer = document.createElement('div');
     statsContainer.id = 'stats-container';
-
-    statsBtn.addEventListener('click', () => {
-      const citiesToAnalyze = this.cityList.filteredCities || this.cityList.cities;
-      this.stats.render(citiesToAnalyze);
-    });
 
     controlsContainer.append(
       sortLabel, sortSelect,
       document.createElement('br'),
-      filterLabel, filterMin, filterMaxLabel, filterMax,
-      document.createElement('br'),
-      statsBtn
+      filterLabel, filterMin, filterMaxLabel, filterMax
     );
 
-    // Инициализация компонентов
     this.searchPanel = new SearchPanel(
       searchPanelContainer,
       (city) => this.handleSearch(city),
       () => {
         if (this.currentCityData) {
           this.cityList.addCity(this.currentCityData);
-          this.cityList.render();
           this.searchPanel.hideSaveButton();
           this.searchPanel.clearInput();
           this.searchPanel.showError('Город сохранён!');
@@ -138,6 +121,10 @@ class App {
     this.weatherCard = new WeatherCard(weatherContainer);
     this.cityList = new CityList(cityListContainer);
     this.stats = new Stats(statsContainer);
+
+    this.cityList.onUpdate = (cities) => {
+      this.stats.render(cities);
+    };
 
     this.mainContainer.append(
       searchPanelContainer,

@@ -7,6 +7,7 @@ class CityList {
     this.sortDirection = 1;
     this.filterMin = null;
     this.filterMax = null;
+    this.onUpdate = null;
   }
 
   addCity(cityData) {
@@ -38,7 +39,6 @@ class CityList {
   applyFiltersAndSort() {
     let result = [...this.cities];
 
-    // Фильтрация по температуре
     if (this.filterMin !== null && this.filterMin !== '') {
       result = result.filter(c => c.temp >= Number(this.filterMin));
     }
@@ -46,7 +46,6 @@ class CityList {
       result = result.filter(c => c.temp <= Number(this.filterMax));
     }
 
-    // Сортировка
     if (this.sortField) {
       result.sort((a, b) => {
         const aVal = a[this.sortField];
@@ -60,6 +59,9 @@ class CityList {
 
     this.filteredCities = result;
     this.render();
+    if (this.onUpdate) {
+      this.onUpdate(this.filteredCities);
+    }
   }
 
   render() {
