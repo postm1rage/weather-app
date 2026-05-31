@@ -5,6 +5,7 @@ import WeatherCard from './ui/weatherCard.js';
 import CityList from './ui/cityList.js';
 import SearchPanel from './ui/searchPanel.js';
 import Stats from './ui/stats.js';
+import ControlsPanel from './ui/controlsPanel.js';
 
 class App {
   constructor() {
@@ -16,6 +17,7 @@ class App {
     this.cityList = null;
     this.searchPanel = null;
     this.stats = null;
+    this.controlsPanel = null;
     this.userName = '';
     this.mainContainer = null;
     this.currentCityData = null;
@@ -60,66 +62,29 @@ class App {
     const weatherContainer = document.createElement('div');
     weatherContainer.id = 'weather-container';
 
+    const controlsContainer = document.createElement('div');
     const cityListContainer = document.createElement('div');
     cityListContainer.id = 'city-list-container';
-
-    // Панель управления
-    const controlsContainer = document.createElement('div');
-    controlsContainer.className = 'controls';
-
-    // Сортировка
-    const sortLabel = document.createElement('label');
-    sortLabel.textContent = 'Сортировать по:';
-    const sortSelect = document.createElement('select');
-    sortSelect.innerHTML = `
-      <option value="">Без сортировки</option>
-      <option value="city">Город</option>
-      <option value="temp">Температура</option>
-      <option value="humidity">Влажность</option>
-      <option value="windSpeed">Ветер</option>
-    `;
-    sortSelect.addEventListener('change', () => {
-      const field = sortSelect.value;
-      if (field) {
-        this.cityList.sortBy(field);
-      } else {
-        this.cityList.sortField = null;
-        this.cityList.applyFiltersAndSort();
-      }
-    });
-
-    // Фильтр по температуре
-    const filterGroup = document.createElement('span');
-    filterGroup.className = 'filter-group';
-
-    const filterLabel = document.createElement('label');
-    filterLabel.textContent = 'Температура от';
-    const filterMin = document.createElement('input');
-    filterMin.type = 'number';
-    filterMin.placeholder = 'Мин';
-    const filterMaxLabel = document.createElement('span');
-    filterMaxLabel.textContent = 'до';
-    filterMaxLabel.style.margin = '0 4px';
-    const filterMax = document.createElement('input');
-    filterMax.type = 'number';
-    filterMax.placeholder = 'Макс';
-
-    filterGroup.append(filterLabel, filterMin, filterMaxLabel, filterMax);
-
-    const applyFilter = () => {
-      const min = filterMin.value !== '' ? Number(filterMin.value) : null;
-      const max = filterMax.value !== '' ? Number(filterMax.value) : null;
-      this.cityList.filterByTemp(min, max);
-    };
-
-    filterMin.addEventListener('keyup', applyFilter);
-    filterMax.addEventListener('keyup', applyFilter);
-
-    controlsContainer.append(sortLabel, sortSelect, filterGroup);
-
     const statsContainer = document.createElement('div');
     statsContainer.id = 'stats-container';
 
+    // Панель управления
+    this.controlsPanel = new ControlsPanel(
+      controlsContainer,
+      (field) => {
+        if (field) {
+          this.cityList.sortBy(field);
+        } else {
+          this.cityList.sortField = null;
+          this.cityList.applyFiltersAndSort();
+        }
+      },
+      (min, max) => {
+        this.cityList.filterByTemp(min, max);
+      }
+    );
+
+    // Поиск
     this.searchPanel = new SearchPanel(
       searchPanelContainer,
       (city) => this.handleSearch(city),
@@ -129,6 +94,7 @@ class App {
           if (added) {
             this.searchPanel.hideSaveButton();
             this.searchPanel.clearInput();
+            this.controlsPanel.resetFilter();
             this.searchPanel.showError('Город сохранён!');
             setTimeout(() => this.searchPanel.hideError(), 3000);
           } else {
@@ -157,6 +123,7 @@ class App {
 
     this.container.appendChild(this.mainContainer);
     this.searchPanel.render();
+    this.controlsPanel.render();
   }
 
   async handleSearch(city) {

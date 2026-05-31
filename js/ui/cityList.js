@@ -16,6 +16,10 @@ class CityList {
       return false;
     }
     this.cities.push(cityData);
+    // Сбрасываем фильтры и сортировку, чтобы новый город был виден
+    this.filterMin = null;
+    this.filterMax = null;
+    this.sortField = null;
     this.applyFiltersAndSort();
     return true;
   }
