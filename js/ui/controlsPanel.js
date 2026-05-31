@@ -1,17 +1,24 @@
+// Панель управления: выпадающий список сортировки и два поля для фильтра по температуре.
+// Принимает колбэки для оповещения внешнего кода об изменении сортировки и фильтра.
 class ControlsPanel {
+  /**
+   * @param {HTMLElement} container - контейнер для вставки панели.
+   * @param {function} onSortChange - будет вызвана с названием поля сортировки (или пустой строкой).
+   * @param {function} onFilterChange - будет вызвана с параметрами (min, max).
+   */
   constructor(container, onSortChange, onFilterChange) {
     this.container = container;
     this.onSortChange = onSortChange;
     this.onFilterChange = onFilterChange;
   }
 
+  // Создаёт DOM-элементы панели и навешивает обработчики.
   render() {
     this.container.innerHTML = '';
 
     const wrapper = document.createElement('div');
     wrapper.className = 'controls';
 
-    // Сортировка
     const sortLabel = document.createElement('label');
     sortLabel.textContent = 'Сортировать по:';
     const sortSelect = document.createElement('select');
@@ -26,7 +33,6 @@ class ControlsPanel {
       this.onSortChange(sortSelect.value);
     });
 
-    // Фильтр по температуре
     const filterGroup = document.createElement('span');
     filterGroup.className = 'filter-group';
 
@@ -57,6 +63,8 @@ class ControlsPanel {
     this.container.appendChild(wrapper);
   }
 
+  // Сбрасывает поля ввода фильтра (очищает значения).
+  // Вызывается внешним кодом, например, после сохранения города.
   resetFilter() {
     const filterMin = this.container.querySelector('input[placeholder="Мин"]');
     const filterMax = this.container.querySelector('input[placeholder="Макс"]');

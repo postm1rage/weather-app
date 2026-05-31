@@ -1,11 +1,21 @@
 import API_KEY from '../config.js';
 
+// Отвечает за общение с OpenWeatherMap API.
+// Формирует URL, выполняет fetch, обрабатывает ошибки сети и HTTP,
+// приводит сырой ответ API к простому объекту с нужными полями.
 class WeatherService {
   constructor() {
+    // Ключ импортируется из внешнего конфига, чтобы не хранить в репозитории
     this.apiKey = API_KEY;
     this.baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
   }
 
+  /**
+   * Запрашивает текущую погоду для указанного города.
+   * @param {string} city - Название города (например, "Moscow").
+   * @returns {Promise<object>} Объект с полями city, temp, feelsLike, humidity, windSpeed, description, icon.
+   * @throws {Error} При проблемах сети или если город не найден.
+   */
   async getWeather(city) {
     const params = new URLSearchParams({
       q: city,

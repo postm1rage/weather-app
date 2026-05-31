@@ -1,8 +1,16 @@
+// Карточка погоды для одного города: название, иконка, температура, описание, детали.
 class WeatherCard {
+  /**
+   * @param {HTMLElement} container - куда будет вставлена карточка.
+   */
   constructor(container) {
     this.container = container;
   }
 
+  /**
+   * Отрисовывает карточку с данными о погоде.
+   * @param {object} data - объект с полями city, temp, feelsLike, humidity, windSpeed, description, icon.
+   */
   render(data) {
     this.clear();
 
@@ -37,6 +45,7 @@ class WeatherCard {
     this.container.appendChild(card);
   }
 
+  // Очищает контейнер (например, перед показом нового города или при ошибке).
   clear() {
     this.container.innerHTML = '';
   }

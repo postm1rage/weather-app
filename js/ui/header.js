@@ -1,10 +1,19 @@
+// Шапка приложения: показывает приветствие с именем пользователя,
+// кнопки переключения темы и смены имени.
 class Header {
+  /**
+   * @param {HTMLElement} container - контейнер для вставки шапки.
+   */
   constructor(container) {
     this.container = container;
-    this.onChangeName = null;
-    this.onToggleTheme = null;
+    this.onChangeName = null;   // колбэк при клике на «Сменить имя»
+    this.onToggleTheme = null;  // колбэк при клике на кнопку темы
   }
 
+  /**
+   * Отрисовывает шапку с приветствием.
+   * @param {string} name - имя пользователя.
+   */
   render(name) {
     this.container.innerHTML = '';
 
@@ -40,6 +49,10 @@ class Header {
     });
   }
 
+  /**
+   * Обновляет текст на кнопке темы в зависимости от состояния.
+   * @param {boolean} isDark - true, если включена тёмная тема.
+   */
   updateThemeButton(isDark) {
     const btn = this.container.querySelector('.btn-theme');
     if (btn) {
@@ -47,6 +60,7 @@ class Header {
     }
   }
 
+  // Убирает шапку из DOM.
   hide() {
     this.container.innerHTML = '';
   }

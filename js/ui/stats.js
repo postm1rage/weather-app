@@ -1,8 +1,17 @@
+// Блок статистики по сохранённым городам:
+// выводит количество городов, среднюю температуру, самый холодный и самый тёплый город.
 class Stats {
+  /**
+   * @param {HTMLElement} container - контейнер для вставки блока.
+   */
   constructor(container) {
     this.container = container;
   }
 
+  /**
+   * Рассчитывает и отображает статистику.
+   * @param {object[]} cities - массив объектов с полями city, temp и др.
+   */
   render(cities) {
     this.container.innerHTML = '';
 
@@ -32,6 +41,7 @@ class Stats {
     this.container.appendChild(block);
   }
 
+  // Скрывает блок статистики.
   hide() {
     this.container.innerHTML = '';
   }

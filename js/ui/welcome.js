@@ -1,9 +1,16 @@
+// Экран приветствия. Показывает поле ввода имени и кнопку «Далее».
+// При подтверждении вызывает переданный колбэк onComplete с именем.
 class WelcomeScreen {
+  /**
+   * @param {HTMLElement} container - контейнер для вставки экрана.
+   * @param {function} onComplete - будет вызвана с именем, когда пользователь нажмёт «Далее» или Enter.
+   */
   constructor(container, onComplete) {
     this.container = container;
     this.onComplete = onComplete;
   }
 
+  // Создаёт форму приветствия.
   render() {
     this.container.innerHTML = '';
 
@@ -42,6 +49,7 @@ class WelcomeScreen {
     });
   }
 
+  // Убирает экран приветствия из DOM.
   hide() {
     this.container.innerHTML = '';
   }

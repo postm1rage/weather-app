@@ -1,10 +1,18 @@
+// Панель поиска города: текстовое поле, кнопка «Узнать погоду» и кнопка «Сохранить город».
+// Управляет состоянием загрузки, ошибками, видимостью кнопки сохранения.
 class SearchPanel {
+  /**
+   * @param {HTMLElement} container - контейнер для вставки панели.
+   * @param {function} onSearch - вызывается при поиске, получает название города.
+   * @param {function} onSave - вызывается при клике на «Сохранить город».
+   */
   constructor(container, onSearch, onSave) {
     this.container = container;
     this.onSearch = onSearch;
     this.onSave = onSave;
   }
 
+  // Создаёт DOM-элементы панели и навешивает обработчики.
   render() {
     this.container.innerHTML = '';
 
@@ -43,28 +51,40 @@ class SearchPanel {
     });
   }
 
+  // Показывает кнопку «Сохранить город».
   showSaveButton() {
     this.saveBtn.style.display = 'inline-block';
   }
 
+  // Скрывает кнопку «Сохранить город».
   hideSaveButton() {
     this.saveBtn.style.display = 'none';
   }
 
+  /**
+   * Показывает сообщение об ошибке.
+   * @param {string} message - текст ошибки.
+   */
   showError(message) {
     this.errorMsg.textContent = message;
     this.errorMsg.style.display = 'block';
   }
 
+  // Скрывает сообщение об ошибке.
   hideError() {
     this.errorMsg.style.display = 'none';
   }
 
+  /**
+   * Переключает кнопку поиска в состояние загрузки.
+   * @param {boolean} isLoading - true, если идёт загрузка.
+   */
   setLoading(isLoading) {
     this.button.disabled = isLoading;
     this.button.textContent = isLoading ? 'Загрузка...' : 'Узнать погоду';
   }
 
+  // Очищает поле ввода города.
   clearInput() {
     this.input.value = '';
   }

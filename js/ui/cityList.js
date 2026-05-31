@@ -1,22 +1,32 @@
+// Хранит массив сохранённых городов, умеет фильтровать, сортировать и отображать таблицу.
+// Сообщает внешнему коду об изменениях через колбэк onUpdate.
 class CityList {
+  /**
+   * @param {HTMLElement} container - DOM-элемент, куда будет рендериться таблица.
+   */
   constructor(container) {
     this.container = container;
-    this.cities = [];
-    this.filteredCities = [];
-    this.sortField = null;
-    this.sortDirection = 1;
-    this.filterMin = null;
-    this.filterMax = null;
-    this.onUpdate = null;
+    this.cities = [];           // исходный массив городов
+    this.filteredCities = [];   // массив после применения фильтров и сортировки
+    this.sortField = null;      // поле, по которому сортируем
+    this.sortDirection = 1;     // 1 – по возрастанию, -1 – по убыванию
+    this.filterMin = null;      // минимальная температура для фильтра
+    this.filterMax = null;      // максимальная температура для фильтра
+    this.onUpdate = null;       // колбэк, вызывается при каждом изменении списка
   }
 
+  /**
+   * Добавляет город в список. Если город уже есть, возвращает false и не добавляет.
+   * После добавления сбрасывает фильтры и сортировку, чтобы новый город был виден.
+   * @param {object} cityData - объект с данными погоды.
+   * @returns {boolean} true, если город добавлен, иначе false.
+   */
   addCity(cityData) {
     const alreadyExists = this.cities.some(c => c.city === cityData.city);
     if (alreadyExists) {
       return false;
     }
     this.cities.push(cityData);
-    // Сбрасываем фильтры и сортировку, чтобы новый город был виден
     this.filterMin = null;
     this.filterMax = null;
     this.sortField = null;
@@ -24,11 +34,19 @@ class CityList {
     return true;
   }
 
+  /**
+   * Удаляет город из списка по названию.
+   * @param {string} name - название города.
+   */
   removeCity(name) {
     this.cities = this.cities.filter(c => c.city !== name);
     this.applyFiltersAndSort();
   }
 
+  /**
+   * Устанавливает поле сортировки. Повторный вызов меняет направление.
+   * @param {string} field - название поля (city, temp, humidity, windSpeed).
+   */
   sortBy(field) {
     if (this.sortField === field) {
       this.sortDirection *= -1;
@@ -39,12 +57,19 @@ class CityList {
     this.applyFiltersAndSort();
   }
 
+  /**
+   * Задаёт диапазон температуры для фильтрации.
+   * @param {number|null} min - нижняя граница (или null).
+   * @param {number|null} max - верхняя граница (или null).
+   */
   filterByTemp(min, max) {
     this.filterMin = min;
     this.filterMax = max;
     this.applyFiltersAndSort();
   }
 
+  // Применяет активные фильтры и сортировку к копии исходного массива,
+  // сохраняет результат в filteredCities и перерисовывает таблицу.
   applyFiltersAndSort() {
     let result = [...this.cities];
 
@@ -73,6 +98,8 @@ class CityList {
     }
   }
 
+  // Строит HTML-таблицу на основе filteredCities.
+  // Если список пуст, выводит сообщение.
   render() {
     this.container.innerHTML = '';
 
@@ -120,10 +147,12 @@ class CityList {
     });
   }
 
+  // Очищает контейнер (используется при смене экранов).
   hide() {
     this.container.innerHTML = '';
   }
 
+  // Принудительно обновляет отображение.
   show() {
     this.render();
   }

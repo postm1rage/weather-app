@@ -7,10 +7,13 @@ import SearchPanel from './ui/searchPanel.js';
 import Stats from './ui/stats.js';
 import ControlsPanel from './ui/controlsPanel.js';
 
+// Главный координатор приложения.
+// Создаёт компоненты, связывает их через колбэки,
+// управляет переходами между экраном приветствия и основным экраном.
 class App {
   constructor() {
     this.container = document.getElementById('app');
-    this.weatherService = new WeatherService();
+    this.weatherService = new WeatherService();   // слой данных
     this.welcomeScreen = null;
     this.header = null;
     this.weatherCard = null;
@@ -19,11 +22,12 @@ class App {
     this.stats = null;
     this.controlsPanel = null;
     this.userName = '';
-    this.mainContainer = null;
-    this.currentCityData = null;
-    this.isDarkTheme = false;
+    this.mainContainer = null;       // контейнер основного экрана
+    this.currentCityData = null;     // последний успешно полученный город
+    this.isDarkTheme = false;        // состояние темы
   }
 
+  // Точка входа. Инициализирует шапку и экран приветствия.
   init() {
     this.header = new Header(this.container);
     this.header.onChangeName = () => {
@@ -54,6 +58,7 @@ class App {
     this.welcomeScreen.render();
   }
 
+  // Строит основной экран: поиск, карточка погоды, панель управления, таблица городов, статистика.
   showMainScreen() {
     this.mainContainer = document.createElement('div');
     this.mainContainer.className = 'main-screen';
@@ -68,7 +73,7 @@ class App {
     const statsContainer = document.createElement('div');
     statsContainer.id = 'stats-container';
 
-    // Панель управления
+    // Панель сортировки и фильтрации
     this.controlsPanel = new ControlsPanel(
       controlsContainer,
       (field) => {
@@ -84,7 +89,7 @@ class App {
       }
     );
 
-    // Поиск
+    // Панель поиска и сохранения
     this.searchPanel = new SearchPanel(
       searchPanelContainer,
       (city) => this.handleSearch(city),
@@ -94,7 +99,7 @@ class App {
           if (added) {
             this.searchPanel.hideSaveButton();
             this.searchPanel.clearInput();
-            this.controlsPanel.resetFilter();
+            this.controlsPanel.resetFilter();   // сбрасываем поля фильтра, т.к. они сброшены и в CityList
             this.searchPanel.showError('Город сохранён!');
             setTimeout(() => this.searchPanel.hideError(), 3000);
           } else {
@@ -109,6 +114,7 @@ class App {
     this.cityList = new CityList(cityListContainer);
     this.stats = new Stats(statsContainer);
 
+    // Автоматическое обновление статистики при изменении списка городов
     this.cityList.onUpdate = (cities) => {
       this.stats.render(cities);
     };
@@ -126,6 +132,11 @@ class App {
     this.controlsPanel.render();
   }
 
+  /**
+   * Обработчик поиска города. Запрашивает погоду, отображает карточку,
+   * управляет видимостью кнопки сохранения.
+   * @param {string} city - название города.
+   */
   async handleSearch(city) {
     if (!city) return;
 
