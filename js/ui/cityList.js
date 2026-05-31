@@ -1,35 +1,34 @@
 class CityList {
-  constructor(container) {
-    this.container = container;
+  constructor() {
     this.cities = [];
   }
 
   addCity(cityData) {
-    throw new Error('Not implemented');
+    this.cities.push(cityData);
   }
 
   removeCity(name) {
-    throw new Error('Not implemented');
+    // позже
   }
 
   sortBy(field) {
-    throw new Error('Not implemented');
+    // позже
   }
 
   filterByTemp(min, max) {
-    throw new Error('Not implemented');
+    // позже
   }
 
   render() {
-    throw new Error('Not implemented');
+    // позже
   }
 
   hide() {
-    throw new Error('Not implemented');
+    // позже
   }
 
   show() {
-    throw new Error('Not implemented');
+    // позже
   }
 }
 
