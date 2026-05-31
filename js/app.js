@@ -3,15 +3,17 @@ import WelcomeScreen from './ui/welcome.js';
 import Header from './ui/header.js';
 import WeatherCard from './ui/weatherCard.js';
 import CityList from './ui/cityList.js';
+import SearchPanel from './ui/searchPanel.js';
 
 class App {
   constructor() {
     this.container = document.getElementById('app');
     this.weatherService = new WeatherService();
-    this.cityList = new CityList();
     this.welcomeScreen = null;
     this.header = null;
     this.weatherCard = null;
+    this.cityList = null;
+    this.searchPanel = null;
     this.userName = '';
     this.mainContainer = null;
     this.currentCityData = null;
@@ -41,73 +43,55 @@ class App {
     this.mainContainer = document.createElement('div');
     this.mainContainer.className = 'main-screen';
 
-    const searchBox = document.createElement('div');
-    searchBox.className = 'search-box';
-
-    const cityInput = document.createElement('input');
-    cityInput.type = 'text';
-    cityInput.placeholder = 'Введите город';
-
-    const searchBtn = document.createElement('button');
-    searchBtn.textContent = 'Узнать погоду';
-
-    const errorMsg = document.createElement('p');
-    errorMsg.className = 'error-message';
-    errorMsg.style.display = 'none';
-
-    searchBox.append(cityInput, searchBtn, errorMsg);
-
+    const searchPanelContainer = document.createElement('div');
     const weatherContainer = document.createElement('div');
     weatherContainer.id = 'weather-container';
-    this.weatherCard = new WeatherCard(weatherContainer);
+    const cityListContainer = document.createElement('div');
+    cityListContainer.id = 'city-list-container';
 
-    const saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Сохранить город';
-    saveBtn.style.display = 'none';
-    saveBtn.addEventListener('click', () => {
-      if (this.currentCityData) {
-        this.cityList.addCity(this.currentCityData);
-        saveBtn.style.display = 'none';
-        cityInput.value = '';
-        errorMsg.style.display = 'none';
-        errorMsg.textContent = 'Город сохранён!';
-        errorMsg.style.display = 'block';
+    this.searchPanel = new SearchPanel(
+      searchPanelContainer,
+      (city) => this.handleSearch(city),
+      () => {
+        if (this.currentCityData) {
+          this.cityList.addCity(this.currentCityData);
+          this.cityList.render();
+          this.searchPanel.hideSaveButton();
+          this.searchPanel.clearInput();
+          this.searchPanel.showError('Город сохранён!');
+          setTimeout(() => this.searchPanel.hideError(), 3000);
+        }
       }
-    });
+    );
 
-    this.mainContainer.append(searchBox, weatherContainer, saveBtn);
+    this.weatherCard = new WeatherCard(weatherContainer);
+    this.cityList = new CityList(cityListContainer);
+
+    this.mainContainer.append(searchPanelContainer, weatherContainer, cityListContainer);
     this.container.appendChild(this.mainContainer);
 
-    const handleSearch = async () => {
-      const city = cityInput.value.trim();
-      if (!city) return;
+    this.searchPanel.render();
+  }
 
-      errorMsg.style.display = 'none';
-      searchBtn.disabled = true;
-      searchBtn.textContent = 'Загрузка...';
+  async handleSearch(city) {
+    if (!city) return;
 
-      try {
-        const data = await this.weatherService.getWeather(city);
-        this.weatherCard.render(data);
-        this.currentCityData = data;
-        saveBtn.style.display = 'inline-block';
-      } catch (err) {
-        errorMsg.textContent = err.message;
-        errorMsg.style.display = 'block';
-        this.weatherCard.clear();
-        saveBtn.style.display = 'none';
-      } finally {
-        searchBtn.disabled = false;
-        searchBtn.textContent = 'Узнать погоду';
-      }
-    };
+    this.searchPanel.hideError();
+    this.searchPanel.setLoading(true);
+    this.searchPanel.hideSaveButton();
 
-    searchBtn.addEventListener('click', handleSearch);
-    cityInput.addEventListener('keyup', (e) => {
-      if (e.key === 'Enter') {
-        handleSearch();
-      }
-    });
+    try {
+      const data = await this.weatherService.getWeather(city);
+      this.weatherCard.render(data);
+      this.currentCityData = data;
+      this.searchPanel.showSaveButton();
+    } catch (err) {
+      this.searchPanel.showError(err.message);
+      this.weatherCard.clear();
+      this.currentCityData = null;
+    } finally {
+      this.searchPanel.setLoading(false);
+    }
   }
 }
 
