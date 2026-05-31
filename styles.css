@@ -12,6 +12,97 @@ body {
   justify-content: center;
   padding: 40px 20px;
   line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+  background-color: #1e1e1e;
+  color: #ddd;
+}
+
+body.dark #app {
+  background: #2a2a2a;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .header {
+  border-bottom-color: #444;
+}
+
+body.dark .welcome input,
+body.dark .search-box input,
+body.dark .controls select,
+body.dark .controls input {
+  background: #3a3a3a;
+  border-color: #555;
+  color: #eee;
+}
+
+body.dark .welcome button,
+body.dark .search-box button {
+  background: #1e88e5;
+}
+
+body.dark .welcome button:hover,
+body.dark .search-box button:hover {
+  background: #1565c0;
+}
+
+body.dark .btn-change-name {
+  background: #3a3a3a;
+  color: #ccc;
+  border-color: #555;
+}
+
+body.dark .btn-change-name:hover {
+  background: #4a4a4a;
+}
+
+body.dark .btn-theme {
+  background: #3a3a3a;
+  color: #ccc;
+  border-color: #555;
+}
+
+body.dark .btn-theme:hover {
+  background: #4a4a4a;
+}
+
+body.dark .weather-card {
+  background: #1a3a5c;
+}
+
+body.dark .controls {
+  background: #2a2a2a;
+}
+
+body.dark .city-table th {
+  background: #3a3a3a;
+}
+
+body.dark .city-table th,
+body.dark .city-table td {
+  border-color: #444;
+}
+
+body.dark .stats-block {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+body.dark .error-message {
+  color: #ef5350;
+}
+
+body.dark .btn-remove {
+  background: transparent;
+  color: #ef5350;
+  border: 1px solid #ef5350;
+}
+
+body.dark .btn-remove:hover {
+  background: #ef5350;
+  color: #fff;
 }
 
 #app {
@@ -21,6 +112,7 @@ body {
   padding: 36px;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: background-color 0.3s;
 }
 
 /* ---- Экран приветствия ---- */
@@ -66,11 +158,29 @@ body {
   margin-bottom: 32px;
   padding-bottom: 14px;
   border-bottom: 1px solid #eee;
+  gap: 10px;
 }
 
 .greeting {
   font-size: 1.25rem;
   font-weight: 600;
+  flex-grow: 1;
+}
+
+.btn-theme {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-theme:hover {
+  background: #e0e0e0;
 }
 
 .btn-change-name {
@@ -228,18 +338,19 @@ body {
 }
 
 .btn-remove {
-  padding: 5px 12px;
-  font-size: 0.85rem;
-  background: #dc3545;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  background: #e57373;
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
+  transition: background 0.2s;
 }
 
 .btn-remove:hover {
-  background: #a71d2a;
+  background: #d32f2f;
 }
 
 /* ---- Статистика ---- */

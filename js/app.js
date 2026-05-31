@@ -19,6 +19,7 @@ class App {
     this.userName = '';
     this.mainContainer = null;
     this.currentCityData = null;
+    this.isDarkTheme = false;
   }
 
   init() {
@@ -30,11 +31,21 @@ class App {
         this.mainContainer = null;
       }
     };
+    this.header.onToggleTheme = () => {
+      this.isDarkTheme = !this.isDarkTheme;
+      if (this.isDarkTheme) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+      this.header.updateThemeButton(this.isDarkTheme);
+    };
 
     this.welcomeScreen = new WelcomeScreen(this.container, (name) => {
       this.userName = name;
       this.welcomeScreen.hide();
       this.header.render(name);
+      this.header.updateThemeButton(this.isDarkTheme);
       this.showMainScreen();
     });
 

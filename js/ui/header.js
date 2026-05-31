@@ -1,6 +1,8 @@
 class Header {
   constructor(container) {
     this.container = container;
+    this.onChangeName = null;
+    this.onToggleTheme = null;
   }
 
   render(name) {
@@ -13,11 +15,15 @@ class Header {
     greeting.textContent = `Привет, ${name}!`;
     greeting.className = 'greeting';
 
+    const themeBtn = document.createElement('button');
+    themeBtn.textContent = 'Тёмная тема';
+    themeBtn.className = 'btn-theme';
+
     const changeBtn = document.createElement('button');
     changeBtn.textContent = 'Сменить имя';
     changeBtn.className = 'btn-change-name';
 
-    header.append(greeting, changeBtn);
+    header.append(greeting, themeBtn, changeBtn);
     this.container.appendChild(header);
 
     changeBtn.addEventListener('click', () => {
@@ -26,6 +32,19 @@ class Header {
         this.onChangeName();
       }
     });
+
+    themeBtn.addEventListener('click', () => {
+      if (this.onToggleTheme) {
+        this.onToggleTheme();
+      }
+    });
+  }
+
+  updateThemeButton(isDark) {
+    const btn = this.container.querySelector('.btn-theme');
+    if (btn) {
+      btn.textContent = isDark ? 'Светлая тема' : 'Тёмная тема';
+    }
   }
 
   hide() {
@@ -33,7 +52,6 @@ class Header {
   }
 
   show() {
-
   }
 }
 
